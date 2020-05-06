@@ -7,4 +7,4 @@ version:
   revision: f139b11009aeb8ed2a3a3aa8b0066e482709dde3
   channel: stable
 
-project_type: package
+project_type: app
