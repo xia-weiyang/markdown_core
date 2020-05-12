@@ -1,6 +1,97 @@
 import 'package:flutter/material.dart';
+import 'package:markdown_core/markdown.dart';
 
 void main() => runApp(MyApp());
+
+const String _markdownData = """
+# Markdown Example
+Markdown allows you to easily include formatted text, images, and even formatted Dart code in your app.
+
+## Titles
+
+Setext-style
+
+```
+This is an H1
+=============
+
+This is an H2
+-------------
+```
+
+Atx-style
+
+```
+# This is an H1
+
+## This is an H2
+
+###### This is an H6
+```
+
+Select the valid headers:
+
+- [x] `# hello`
+- [ ] `#hello`
+
+## Links
+
+[Google's Homepage][Google]
+
+```
+[inline-style](https://www.google.com)
+
+[reference-style][Google]
+```
+
+## Images
+
+![Flutter logo](/dart-lang/site-shared/master/src/_assets/image/flutter/icon/64.png)
+
+## Tables
+
+|Syntax                                 |Result                               |
+|---------------------------------------|-------------------------------------|
+|`*italic 1*`                           |*italic 1*                           |
+|`_italic 2_`                           | _italic 2_                          |
+|`**bold 1**`                           |**bold 1**                           |
+|`__bold 2__`                           |__bold 2__                           |
+|`This is a ~~strikethrough~~`          |This is a ~~strikethrough~~          |
+|`***italic bold 1***`                  |***italic bold 1***                  |
+|`___italic bold 2___`                  |___italic bold 2___                  |
+|`***~~italic bold strikethrough 1~~***`|***~~italic bold strikethrough 1~~***|
+|`~~***italic bold strikethrough 2***~~`|~~***italic bold strikethrough 2***~~|
+
+## Styling
+Style text as _italic_, __bold__, ~~strikethrough~~, or `inline code`.
+
+- Use bulleted lists
+- To better clarify
+- Your points
+
+## Code blocks
+Formatted Dart code looks really pretty too:
+
+```
+void main() {
+  runApp(MaterialApp(
+    home: Scaffold(
+      body: Markdown(data: markdownData),
+    ),
+  ));
+}
+```
+
+## Markdown widget
+
+This is an example of how to create your own Markdown widget:
+
+    Markdown(data: 'Hello _world_!');
+
+Enjoy!
+
+[Google]: https://www.google.com/
+""";
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -71,41 +162,11 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
-            ),
-          ],
+      body: SafeArea(
+        child: Markdown(
+          data: _markdownData,
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
