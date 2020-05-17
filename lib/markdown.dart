@@ -2,6 +2,7 @@ library markdown_core;
 
 import 'package:flutter/material.dart';
 import 'package:markdown/markdown.dart';
+import 'package:markdown_core/builder.dart';
 
 class Markdown extends StatefulWidget {
   const Markdown({
@@ -24,17 +25,16 @@ class MarkdownState extends State<Markdown> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: _parseMarkdown(),
     );
   }
 
   List<Widget> _parseMarkdown() {
     print(markdownToHtml(widget.data));
-    var nodeList = Document().parseInline(widget.data);
-    for (var node in nodeList) {
-      print(node.textContent);
-    }
-
-    return [];
+    final List<String> lines = widget.data.split(RegExp(r'\r?\n'));
+    final nodes = Document().parseLines(lines);
+    print(nodes.length);
+    return MarkdownBuilder().build(nodes);
   }
 }
