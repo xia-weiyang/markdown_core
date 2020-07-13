@@ -4,8 +4,15 @@ import 'package:markdown_core/markdown.dart';
 void main() => runApp(MyApp());
 
 const String _markdownData = """
-# 一级标题
-## 二级标题
+##  1.标题
+
+行首加井号表示不同级别的标题(H1-H6),例如：# H1,## H2,### H3,#### H4(注意：#号后边应有英文空格)。
+#  一级标题
+##  二级标题
+###  三级标题
+####  四级标题
+#####  五级标题
+######  六级标题
 """;
 
 class MyApp extends StatelessWidget {
@@ -50,7 +57,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done

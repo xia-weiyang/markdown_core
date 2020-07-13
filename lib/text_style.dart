@@ -6,22 +6,42 @@ final defaultTextStyle = TextStyle(
 );
 
 TextStyle getTextStyle(TextStyle textStyle, String tag) {
-  if ('h1' == tag) {
-    textStyle = textStyle.copyWith(
-      fontSize: 28,
-    );
-  } else if ('h2' == tag) {
-    textStyle = textStyle.copyWith(
-      fontSize: 24,
-    );
-  } else if ('strong' == tag) {
-    textStyle = textStyle.copyWith(
-      fontWeight: FontWeight.bold,
-    );
-  } else if ('em' == tag) {
-    textStyle = textStyle.copyWith(
-      fontStyle: FontStyle.italic,
-    );
+  switch (tag) {
+    case 'h1':
+      textStyle = textStyle.copyWith(
+        fontSize: 28,
+      );
+      break;
+    case 'h2':
+      textStyle = textStyle.copyWith(
+        fontSize: 26,
+      );
+      break;
+    case 'h3':
+      textStyle = textStyle.copyWith(
+        fontSize: 24,
+      );
+      break;
+    case 'h4':
+      textStyle = textStyle.copyWith(
+        fontSize: 22,
+      );
+      break;
+    case 'h5':
+      textStyle = textStyle.copyWith(
+        fontSize: 21,
+      );
+      break;
+    case 'h6':
+      textStyle = textStyle.copyWith(
+        fontSize: 20,
+      );
+      break;
+    case 'p':
+      textStyle = textStyle.copyWith(
+        fontSize: 18,
+      );
+      break;
   }
   return textStyle;
 }

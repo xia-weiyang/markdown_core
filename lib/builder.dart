@@ -22,7 +22,7 @@ class MarkdownBuilder implements md.NodeVisitor {
         textStyle: getTextStyle(lastTextStyle, element.tag),
       ));
     } else {
-      _textStyle = getTextStyle(_textStyle, element.tag);
+      _textStyle = getTextStyle(defaultTextStyle, element.tag);
     }
 
     return true;
@@ -45,12 +45,18 @@ class MarkdownBuilder implements md.NodeVisitor {
       _inlines.removeLast();
     }
 
-    if ('h1' == element.tag || 'h2' == element.tag) {
+    if (_kBlockTags.indexOf(element.tag) != -1) {
+      _widgets.add(SizedBox(
+        height: 3,
+      ));
       _widgets.add(RichText(
         text: TextSpan(
           children: _textSpans,
           style: _textStyle,
         ),
+      ));
+      _widgets.add(SizedBox(
+        height: 3,
       ));
     }
   }
@@ -66,7 +72,7 @@ class MarkdownBuilder implements md.NodeVisitor {
       _inlines.clear();
       _textSpans = [];
       level = 0;
-      
+
       node.accept(this);
     }
     return _widgets;
@@ -82,3 +88,13 @@ class _InlineElement {
   final String tag;
   final TextStyle textStyle;
 }
+
+const List<String> _kBlockTags = const <String>[
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'p',
+];
