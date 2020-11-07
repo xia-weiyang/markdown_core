@@ -1,29 +1,25 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:markdown_core/text_style.dart';
 
 class MarkdownBuilder implements md.NodeVisitor {
   final _widgets = <Widget>[];
-  final _inlines = <_InlineElement>[];
-  List<TextSpan> _textSpans;
-  var _textStyle = defaultTextStyle;
-  int level = 0;
+  int _level = 0;
+  List<_Element> _elementList = <_Element>[];
+  TextStyle _textStyle = defaultTextStyle;
 
   @override
   bool visitElementBefore(md.Element element) {
-    print('visitElementBefore ${element.textContent}');
-    level++;
+    _level++;
+    debugPrint('visitElementBefore $_level ${element.textContent}');
 
-    if (level >= 2) {
-      var lastTextStyle =
-          _inlines.isEmpty ? _textStyle : _inlines.last.textStyle;
-      _inlines.add(_InlineElement(
-        tag: element.tag,
-        textStyle: getTextStyle(lastTextStyle, element.tag),
-      ));
-    } else {
-      _textStyle = getTextStyle(defaultTextStyle, element.tag);
-    }
+    _elementList.add(_Element(
+      element.tag,
+      getTextStyle(
+          _elementList.isNotEmpty ? _elementList.last.textStyle : _textStyle,
+          element.tag),
+    ));
 
     return true;
   }
@@ -31,33 +27,72 @@ class MarkdownBuilder implements md.NodeVisitor {
   @override
   void visitText(md.Text text) {
     print('text ${text.text}');
-    _textSpans.add(TextSpan(
+
+    var last = _elementList.last;
+    last.textSpans ??= [];
+
+    last.textSpans.add(TextSpan(
       text: text.text,
-      style: _inlines.isEmpty ? _textStyle : _inlines.last.textStyle,
+      style: last.textStyle,
     ));
   }
 
   @override
   void visitElementAfter(md.Element element) {
-    print('visitElementAfter ${element.textContent}');
-    level--;
-    if (_inlines.isNotEmpty && _inlines.last.tag == element.tag) {
-      _inlines.removeLast();
-    }
+    debugPrint('visitElementAfter $_level ${element.textContent}');
+    _level--;
 
-    if (_kBlockTags.indexOf(element.tag) != -1) {
-      _widgets.add(SizedBox(
-        height: 3,
-      ));
-      _widgets.add(RichText(
+    if (_elementList.isEmpty) return;
+    var last = _elementList.last;
+    _elementList.removeLast();
+    var tempWidget;
+    if (_kTextTags.indexOf(element.tag) != -1) {
+      tempWidget = RichText(
         text: TextSpan(
-          children: _textSpans,
-          style: _textStyle,
+          children: last.textSpans,
+          style: last.textStyle,
+        ),
+      );
+    } else if ('li' == element.tag) {
+      final temp = <Widget>[];
+      temp.add(Padding(
+        padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+        child: Icon(
+          Icons.circle,
+          size: 10,
         ),
       ));
-      _widgets.add(SizedBox(
-        height: 3,
+      temp.add(RichText(
+        text: TextSpan(
+          children: last.textSpans,
+          style: last.textStyle,
+        ),
       ));
+      if (last.widgets != null) {
+        temp.add(Container(
+          width: 200,
+          child: Column(
+            children: last.widgets,
+          ),
+        ));
+      }
+      tempWidget = Row(
+        children: temp,
+      );
+    } else if (last.widgets != null && last.widgets.isNotEmpty) {
+      tempWidget = last.widgets[0];
+    }
+
+    if (_elementList.isEmpty) {
+      _widgets.add(
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0, 3, 0, 3),
+          child: tempWidget,
+        ),
+      );
+    } else {
+      _elementList.last.widgets ??= [];
+      _elementList.last.widgets.add(tempWidget);
     }
   }
 
@@ -69,9 +104,8 @@ class MarkdownBuilder implements md.NodeVisitor {
     _widgets.clear();
 
     for (md.Node node in nodes) {
-      _inlines.clear();
-      _textSpans = [];
-      level = 0;
+      _level = 0;
+      _elementList.clear();
 
       node.accept(this);
     }
@@ -79,17 +113,19 @@ class MarkdownBuilder implements md.NodeVisitor {
   }
 }
 
-class _InlineElement {
-  _InlineElement({
+class _Element {
+  _Element(
     this.tag,
     this.textStyle,
-  });
+  );
 
   final String tag;
-  final TextStyle textStyle;
+  List<Widget> widgets;
+  List<TextSpan> textSpans;
+  TextStyle textStyle;
 }
 
-const List<String> _kBlockTags = const <String>[
+const List<String> _kTextTags = const <String>[
   'h1',
   'h2',
   'h3',
@@ -97,4 +133,5 @@ const List<String> _kBlockTags = const <String>[
   'h5',
   'h6',
   'p',
+  'pre'
 ];

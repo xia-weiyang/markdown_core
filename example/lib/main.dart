@@ -4,15 +4,34 @@ import 'package:markdown_core/markdown.dart';
 void main() => runApp(MyApp());
 
 const String _markdownData = """
-##  1.标题
-
+## 1.标题
 行首加井号表示不同级别的标题(H1-H6),例如：# H1,## H2,### H3,#### H4(注意：#号后边应有英文空格)。
-#  一级标题
-##  二级标题
-###  三级标题
-####  四级标题
-#####  五级标题
-######  六级标题
+# 一级标题
+## 二级标题
+### 三级标题
+#### 四级标题
+##### 五级标题
+###### 六级标题
+
+## 2.文本
+
++ 普通文本
+
+直接输入的文字就是普通文本。
+
++ 单行文本
+
+        使用两个Tab(或八个空格)符实现单行文本.
+
++ 多行文本
+        多行文本和
+        单行文本异曲同工，只要在
+        每行行首加两个Tab(或八个空格)。
++ 文字高亮
+如果你想使一段话中部分文字高亮显示，来起到突出强调的作用，那么可以把它用 \`  \`包围起来，``注意``这不是单引号，而是``Tab``上方，``数字1``左边的按键（注意使用``英文``输入法）。
++ 斜体和粗体
+使用 * 或 ** 将文字包围起来表示斜体和粗体。
+这是 *斜体*，这是 **粗体**。
 """;
 
 class MyApp extends StatelessWidget {
@@ -72,8 +91,10 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: SafeArea(
-        child: Markdown(
-          data: _markdownData,
+        child: SingleChildScrollView(
+          child: Markdown(
+            data: _markdownData,
+          ),
         ),
       ),
     );

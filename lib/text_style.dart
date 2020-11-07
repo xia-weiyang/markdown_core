@@ -42,6 +42,11 @@ TextStyle getTextStyle(TextStyle textStyle, String tag) {
         fontSize: 18,
       );
       break;
+    case 'li':
+      textStyle = textStyle.copyWith(
+        fontSize: 20,
+      );
+      break;
   }
   return textStyle;
 }
