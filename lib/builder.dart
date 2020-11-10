@@ -46,7 +46,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     var last = _elementList.last;
     _elementList.removeLast();
     var tempWidget;
-    if (_kTextTags.indexOf(element.tag) != -1) {
+    if (kTextTags.indexOf(element.tag) != -1) {
       tempWidget = RichText(
         text: TextSpan(
           children: last.textSpans,
@@ -54,33 +54,18 @@ class MarkdownBuilder implements md.NodeVisitor {
         ),
       );
     } else if ('li' == element.tag) {
-      final temp = <Widget>[];
-      temp.add(Padding(
-        padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-        child: Icon(
-          Icons.circle,
-          size: 10,
-        ),
-      ));
-      temp.add(RichText(
-        text: TextSpan(
-          children: last.textSpans,
-          style: last.textStyle,
-        ),
-      ));
-      if (last.widgets != null) {
-        temp.add(Container(
-          width: 200,
-          child: Column(
-            children: last.widgets,
-          ),
-        ));
-      }
-      tempWidget = Row(
-        children: temp,
-      );
+      tempWidget = _resolveToLi(last);
+    } else if ('pre' == element.tag) {
+      tempWidget = _resolveToPre(last);
     } else if (last.widgets != null && last.widgets.isNotEmpty) {
-      tempWidget = last.widgets[0];
+      if (last.widgets.length == 1) {
+        tempWidget = last.widgets[0];
+      } else {
+        tempWidget = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: last.widgets,
+        );
+      }
     }
 
     if (_elementList.isEmpty) {
@@ -125,13 +110,47 @@ class _Element {
   TextStyle textStyle;
 }
 
-const List<String> _kTextTags = const <String>[
-  'h1',
-  'h2',
-  'h3',
-  'h4',
-  'h5',
-  'h6',
-  'p',
-  'pre'
-];
+Widget _resolveToLi(_Element last) {
+  final temp = <Widget>[];
+  temp.add(Padding(
+    padding: const EdgeInsets.fromLTRB(8, 10, 8, 0),
+    child: Icon(
+      Icons.circle,
+      size: 10,
+    ),
+  ));
+  temp.add(RichText(
+    text: TextSpan(
+      children: last.textSpans,
+      style: last.textStyle,
+    ),
+  ));
+  if (last.widgets != null) {
+    temp.add(Container(
+      width: 200,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: last.widgets,
+      ),
+    ));
+  }
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.start,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: temp,
+  );
+}
+
+Widget _resolveToPre(_Element last) {
+  return Padding(
+    padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+    child: Container(
+      color: const Color(0xffeeeeee),
+      padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: last.widgets,
+      ),
+    ),
+  );
+}

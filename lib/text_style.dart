@@ -1,6 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+const List<String> kTextTags = const <String>[
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'p',
+  'code'
+];
+
 final defaultTextStyle = TextStyle(
   color: Colors.black,
 );
@@ -44,7 +55,13 @@ TextStyle getTextStyle(TextStyle textStyle, String tag) {
       break;
     case 'li':
       textStyle = textStyle.copyWith(
-        fontSize: 20,
+        fontSize: 18,
+      );
+      break;
+    case 'code':
+      textStyle = textStyle.copyWith(
+        fontSize: 15,
+        color: textStyle.color.withAlpha(200),
       );
       break;
   }
