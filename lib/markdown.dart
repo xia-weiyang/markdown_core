@@ -31,10 +31,9 @@ class MarkdownState extends State<Markdown> {
   }
 
   List<Widget> _parseMarkdown() {
-    print(markdownToHtml(widget.data));
+    debugPrint(markdownToHtml(widget.data));
     final List<String> lines = widget.data.split(RegExp(r'\r?\n'));
     final nodes = Document().parseLines(lines);
-    print(nodes.length);
-    return MarkdownBuilder().build(nodes);
+    return MarkdownBuilder(context).build(nodes);
   }
 }

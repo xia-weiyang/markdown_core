@@ -9,7 +9,9 @@ const List<String> kTextTags = const <String>[
   'h5',
   'h6',
   'p',
-  'code'
+  'code',
+  'strong',
+  'em',
 ];
 
 final defaultTextStyle = TextStyle(
@@ -62,6 +64,16 @@ TextStyle getTextStyle(TextStyle textStyle, String tag) {
       textStyle = textStyle.copyWith(
         fontSize: 15,
         color: textStyle.color.withAlpha(200),
+      );
+      break;
+    case 'strong':
+      textStyle = textStyle.copyWith(
+        fontWeight: FontWeight.bold,
+      );
+      break;
+    case 'em':
+      textStyle = textStyle.copyWith(
+        fontStyle: FontStyle.italic,
       );
       break;
   }

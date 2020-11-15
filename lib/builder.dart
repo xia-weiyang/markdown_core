@@ -3,22 +3,42 @@ import 'package:flutter/widgets.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:markdown_core/text_style.dart';
 
+/// 递归解析标签
+/// [_elementList] 每个标签依次放入该集合
+/// 在[visitElementBefore]时添加
+/// 在[visitElementAfter]时将其移除
+
 class MarkdownBuilder implements md.NodeVisitor {
+  MarkdownBuilder(this.context);
+
   final _widgets = <Widget>[];
   int _level = 0;
   List<_Element> _elementList = <_Element>[];
   TextStyle _textStyle = defaultTextStyle;
+
+  final BuildContext context;
 
   @override
   bool visitElementBefore(md.Element element) {
     _level++;
     debugPrint('visitElementBefore $_level ${element.textContent}');
 
+    var textStyle = getTextStyle(
+        _elementList.isNotEmpty ? _elementList.last.textStyle : _textStyle,
+        element.tag);
+
+    // 超级自定义一些特殊样式
+    if (_elementList.isNotEmpty) {
+      if (_elementList.last.tag == 'p' && element.tag == 'code') {
+        textStyle = textStyle.copyWith(
+          color: Colors.red.shade800,
+        );
+      }
+    }
+
     _elementList.add(_Element(
       element.tag,
-      getTextStyle(
-          _elementList.isNotEmpty ? _elementList.last.textStyle : _textStyle,
-          element.tag),
+      textStyle,
     ));
 
     return true;
@@ -26,7 +46,7 @@ class MarkdownBuilder implements md.NodeVisitor {
 
   @override
   void visitText(md.Text text) {
-    print('text ${text.text}');
+    debugPrint('text ${text.text}');
 
     var last = _elementList.last;
     last.textSpans ??= [];
@@ -39,7 +59,7 @@ class MarkdownBuilder implements md.NodeVisitor {
 
   @override
   void visitElementAfter(md.Element element) {
-    debugPrint('visitElementAfter $_level ${element.textContent}');
+    debugPrint('visitElementAfter $_level ${element.tag}');
     _level--;
 
     if (_elementList.isEmpty) return;
@@ -47,14 +67,21 @@ class MarkdownBuilder implements md.NodeVisitor {
     _elementList.removeLast();
     var tempWidget;
     if (kTextTags.indexOf(element.tag) != -1) {
-      tempWidget = RichText(
-        text: TextSpan(
-          children: last.textSpans,
-          style: last.textStyle,
-        ),
-      );
+      if (_elementList.isNotEmpty &&
+          kTextTags.indexOf(_elementList.last.tag) != -1) {
+        // 内联标签处理
+        _elementList.last.textSpans ??= [];
+        _elementList.last.textSpans.addAll(last.textSpans);
+      } else {
+        tempWidget = RichText(
+          text: TextSpan(
+            children: last.textSpans,
+            style: last.textStyle,
+          ),
+        );
+      }
     } else if ('li' == element.tag) {
-      tempWidget = _resolveToLi(last);
+      tempWidget = _resolveToLi(last, context);
     } else if ('pre' == element.tag) {
       tempWidget = _resolveToPre(last);
     } else if (last.widgets != null && last.widgets.isNotEmpty) {
@@ -68,16 +95,18 @@ class MarkdownBuilder implements md.NodeVisitor {
       }
     }
 
-    if (_elementList.isEmpty) {
-      _widgets.add(
-        Padding(
-          padding: const EdgeInsets.fromLTRB(0, 3, 0, 3),
-          child: tempWidget,
-        ),
-      );
-    } else {
-      _elementList.last.widgets ??= [];
-      _elementList.last.widgets.add(tempWidget);
+    if (tempWidget != null) {
+      if (_elementList.isEmpty) {
+        _widgets.add(
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 3, 0, 3),
+            child: tempWidget,
+          ),
+        );
+      } else {
+        _elementList.last.widgets ??= [];
+        _elementList.last.widgets.add(tempWidget);
+      }
     }
   }
 
@@ -110,7 +139,7 @@ class _Element {
   TextStyle textStyle;
 }
 
-Widget _resolveToLi(_Element last) {
+Widget _resolveToLi(_Element last, BuildContext context) {
   final temp = <Widget>[];
   temp.add(Padding(
     padding: const EdgeInsets.fromLTRB(8, 10, 8, 0),
@@ -127,7 +156,7 @@ Widget _resolveToLi(_Element last) {
   ));
   if (last.widgets != null) {
     temp.add(Container(
-      width: 200,
+      width: MediaQuery.of(context).size.width - 26 * 2,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: last.widgets,
@@ -143,10 +172,11 @@ Widget _resolveToLi(_Element last) {
 
 Widget _resolveToPre(_Element last) {
   return Padding(
-    padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+    padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
     child: Container(
+      width: double.infinity,
       color: const Color(0xffeeeeee),
-      padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+      padding: const EdgeInsets.fromLTRB(8, 14, 8, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: last.widgets,
