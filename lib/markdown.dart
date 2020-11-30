@@ -31,9 +31,14 @@ class MarkdownState extends State<Markdown> {
   }
 
   List<Widget> _parseMarkdown() {
-    debugPrint(markdownToHtml(widget.data));
+    // debugPrint(markdownToHtml(
+    //   widget.data,
+    //   extensionSet: ExtensionSet.gitHubWeb,
+    // ));
     final List<String> lines = widget.data.split(RegExp(r'\r?\n'));
-    final nodes = Document().parseLines(lines);
+    final nodes = Document(
+      extensionSet: ExtensionSet.gitHubWeb,
+    ).parseLines(lines);
     return MarkdownBuilder(context).build(nodes);
   }
 }
