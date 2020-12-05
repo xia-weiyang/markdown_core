@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:markdown/markdown.dart' as md;
@@ -9,7 +10,10 @@ import 'package:markdown_core/text_style.dart';
 /// 在[visitElementAfter]时将其移除
 
 class MarkdownBuilder implements md.NodeVisitor {
-  MarkdownBuilder(this.context);
+  MarkdownBuilder(
+    this.context,
+    this.linkTap,
+  );
 
   final _widgets = <Widget>[];
   int _level = 0;
@@ -17,6 +21,7 @@ class MarkdownBuilder implements md.NodeVisitor {
   TextStyle _textStyle = defaultTextStyle;
 
   final BuildContext context;
+  final LinkTap linkTap;
 
   @override
   bool visitElementBefore(md.Element element) {
@@ -39,6 +44,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     _elementList.add(_Element(
       element.tag,
       textStyle,
+      element.attributes,
     ));
 
     return true;
@@ -50,6 +56,21 @@ class MarkdownBuilder implements md.NodeVisitor {
 
     var last = _elementList.last;
     last.textSpans ??= [];
+
+    if (last.tag == 'a') {
+      last.textSpans.add(TextSpan(
+        text: text.text,
+        style: last.textStyle,
+        recognizer: TapGestureRecognizer()
+          ..onTap = () {
+            if (linkTap != null && last.attributes != null) {
+              debugPrint(last.attributes.toString());
+              linkTap(last.attributes['href']);
+            }
+          },
+      ));
+      return;
+    }
 
     last.textSpans.add(TextSpan(
       text: text.text,
@@ -99,7 +120,7 @@ class MarkdownBuilder implements md.NodeVisitor {
       if (_elementList.isEmpty) {
         _widgets.add(
           Padding(
-            padding: const EdgeInsets.fromLTRB(0, 3, 0, 3),
+            padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
             child: tempWidget,
           ),
         );
@@ -131,13 +152,18 @@ class _Element {
   _Element(
     this.tag,
     this.textStyle,
+    this.attributes,
   );
 
   final String tag;
   List<Widget> widgets;
   List<TextSpan> textSpans;
   TextStyle textStyle;
+  Map<String, String> attributes;
 }
+
+/// 链接点击
+typedef LinkTap(String link);
 
 Widget _resolveToLi(_Element last, BuildContext context) {
   final temp = <Widget>[];

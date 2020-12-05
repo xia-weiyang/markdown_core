@@ -13,6 +13,7 @@ const List<String> kTextTags = const <String>[
   'strong',
   'em',
   'del',
+  'a',
 ];
 
 final defaultTextStyle = TextStyle(
@@ -80,6 +81,11 @@ TextStyle getTextStyle(TextStyle textStyle, String tag) {
     case 'del':
       textStyle = textStyle.copyWith(
         decoration: TextDecoration.lineThrough,
+      );
+      break;
+    case 'a':
+      textStyle = textStyle.copyWith(
+        color: Colors.blue,
       );
       break;
   }
