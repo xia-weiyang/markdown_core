@@ -13,6 +13,7 @@ class MarkdownBuilder implements md.NodeVisitor {
   MarkdownBuilder(
     this.context,
     this.linkTap,
+    this.widgetImage,
   );
 
   final _widgets = <Widget>[];
@@ -22,6 +23,7 @@ class MarkdownBuilder implements md.NodeVisitor {
 
   final BuildContext context;
   final LinkTap linkTap;
+  final WidgetImage widgetImage;
 
   @override
   bool visitElementBefore(md.Element element) {
@@ -54,6 +56,7 @@ class MarkdownBuilder implements md.NodeVisitor {
   void visitText(md.Text text) {
     debugPrint('text ${text.text}');
 
+    if (_elementList.isEmpty) return;
     var last = _elementList.last;
     last.textSpans ??= [];
 
@@ -105,6 +108,14 @@ class MarkdownBuilder implements md.NodeVisitor {
       tempWidget = _resolveToLi(last, context);
     } else if ('pre' == element.tag) {
       tempWidget = _resolveToPre(last);
+    } else if ('img' == element.tag) {
+      if (widgetImage != null) {
+        if (element.attributes != null) {
+          debugPrint(element.attributes.toString());
+          tempWidget = widgetImage(element.attributes['src']);
+          _elementList.clear();
+        }
+      }
     } else if (last.widgets != null && last.widgets.isNotEmpty) {
       if (last.widgets.length == 1) {
         tempWidget = last.widgets[0];
@@ -163,7 +174,9 @@ class _Element {
 }
 
 /// 链接点击
-typedef LinkTap(String link);
+typedef void LinkTap(String link);
+
+typedef Widget WidgetImage(String imageUrl);
 
 Widget _resolveToLi(_Element last, BuildContext context) {
   final temp = <Widget>[];

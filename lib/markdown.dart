@@ -9,11 +9,14 @@ class Markdown extends StatefulWidget {
     Key key,
     this.data,
     this.linkTap,
+    this.image,
   }) : super(key: key);
 
   final String data;
 
   final LinkTap linkTap;
+
+  final WidgetImage image;
 
   @override
   MarkdownState createState() => MarkdownState();
@@ -45,6 +48,7 @@ class MarkdownState extends State<Markdown> {
     return MarkdownBuilder(
       context,
       widget.linkTap,
+      widget.image,
     ).build(nodes);
   }
 }

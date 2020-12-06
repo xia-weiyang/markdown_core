@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:markdown_core/markdown.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 void main() => runApp(MyApp());
 
@@ -28,7 +29,23 @@ const String _markdownData = """
 
 ## 4. 图片
 
+使用 \\!\\[描述](图片链接地址) 插入图像，仅仅比链接前面多了一个!号。插入图片示例： 
+
+![旧时光](https://oss.jiushig.com/oldtime/oldtime_wallpaper.png)
+
 ## 5. 列表
+
+使用 *，+，- 表示无序列表。
+
+- 无序列表项 一
+- 无序列表项 二
+- 无序列表项 三
+
+行首加四个空格表示二级列表，以此类推。
+
++ 编程语言
+    + 脚本语言
+        + Python
 
 ## 6. 引用
 
@@ -99,6 +116,18 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Markdown(
             data: _markdownData,
             linkTap: (link) => print('点击了链接 $link'),
+            image: (imageUrl) {
+              print('imageUrl $imageUrl');
+              return CachedNetworkImage(
+                imageUrl: imageUrl,
+                placeholder: (context, url) => Container(
+                  width: double.infinity,
+                  height: 300,
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+                errorWidget: (context, url, error) => Icon(Icons.error),
+              );
+            },
           ),
         ),
       ),
