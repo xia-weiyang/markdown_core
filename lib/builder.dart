@@ -14,6 +14,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     this.context,
     this.linkTap,
     this.widgetImage,
+    this.maxWidth,
   );
 
   final _widgets = <Widget>[];
@@ -24,6 +25,7 @@ class MarkdownBuilder implements md.NodeVisitor {
   final BuildContext context;
   final LinkTap linkTap;
   final WidgetImage widgetImage;
+  final double maxWidth;
 
   @override
   bool visitElementBefore(md.Element element) {
@@ -157,6 +159,70 @@ class MarkdownBuilder implements md.NodeVisitor {
     }
     return _widgets;
   }
+
+  Widget _resolveToLi(_Element last, BuildContext context) {
+    final temp = <Widget>[];
+    final temp1 = <Widget>[];
+    int liNum = 1;
+    _elementList?.forEach((element) {
+      if (element.tag == 'li') liNum++;
+    });
+    temp.add(Padding(
+      padding: const EdgeInsets.fromLTRB(8, 10, 8, 0),
+      child: Icon(
+        Icons.circle,
+        size: 10,
+      ),
+    ));
+    if (last.widgets == null) {
+      temp.add(Container(
+        width: maxWidth - (26 * liNum),
+        child: RichText(
+          text: TextSpan(
+            children: last.textSpans,
+            style: last.textStyle,
+          ),
+        ),
+      ));
+    } else {
+      temp1.add(RichText(
+        text: TextSpan(
+          children: last.textSpans,
+          style: last.textStyle,
+        ),
+      ));
+      temp1.addAll(last.widgets);
+      temp.add(
+        Container(
+          width: maxWidth - (26 * liNum),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: temp1,
+          ),
+        ),
+      );
+    }
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: temp,
+    );
+  }
+
+  Widget _resolveToPre(_Element last) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+      child: Container(
+        width: double.infinity,
+        color: const Color(0xffeeeeee),
+        padding: const EdgeInsets.fromLTRB(8, 14, 8, 0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: last.widgets,
+        ),
+      ),
+    );
+  }
 }
 
 class _Element {
@@ -177,49 +243,3 @@ class _Element {
 typedef void LinkTap(String link);
 
 typedef Widget WidgetImage(String imageUrl);
-
-Widget _resolveToLi(_Element last, BuildContext context) {
-  final temp = <Widget>[];
-  temp.add(Padding(
-    padding: const EdgeInsets.fromLTRB(8, 10, 8, 0),
-    child: Icon(
-      Icons.circle,
-      size: 10,
-    ),
-  ));
-  temp.add(RichText(
-    text: TextSpan(
-      children: last.textSpans,
-      style: last.textStyle,
-    ),
-  ));
-  if (last.widgets != null) {
-    temp.add(Container(
-      width: MediaQuery.of(context).size.width - 26 * 2,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: last.widgets,
-      ),
-    ));
-  }
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.start,
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: temp,
-  );
-}
-
-Widget _resolveToPre(_Element last) {
-  return Padding(
-    padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
-    child: Container(
-      width: double.infinity,
-      color: const Color(0xffeeeeee),
-      padding: const EdgeInsets.fromLTRB(8, 14, 8, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: last.widgets,
-      ),
-    ),
-  );
-}

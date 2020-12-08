@@ -10,6 +10,7 @@ class Markdown extends StatefulWidget {
     this.data,
     this.linkTap,
     this.image,
+    this.maxWidth,
   }) : super(key: key);
 
   final String data;
@@ -17,6 +18,8 @@ class Markdown extends StatefulWidget {
   final LinkTap linkTap;
 
   final WidgetImage image;
+
+  final double maxWidth;
 
   @override
   MarkdownState createState() => MarkdownState();
@@ -49,6 +52,7 @@ class MarkdownState extends State<Markdown> {
       context,
       widget.linkTap,
       widget.image,
+      widget.maxWidth ?? MediaQuery.of(context).size.width,
     ).build(nodes);
   }
 }
