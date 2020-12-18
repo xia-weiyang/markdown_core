@@ -62,9 +62,13 @@ class MarkdownBuilder implements md.NodeVisitor {
     var last = _elementList.last;
     last.textSpans ??= [];
 
+    // 替换特定字符串
+    var content = text.text?.replaceAll('&gt;', '>');
+    content = content?.replaceAll('&lt;', '<');
+
     if (last.tag == 'a') {
       last.textSpans.add(TextSpan(
-        text: text.text,
+        text: content,
         style: last.textStyle,
         recognizer: TapGestureRecognizer()
           ..onTap = () {
@@ -78,7 +82,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     }
 
     last.textSpans.add(TextSpan(
-      text: text.text,
+      text: content,
       style: last.textStyle,
     ));
   }
@@ -107,9 +111,11 @@ class MarkdownBuilder implements md.NodeVisitor {
         );
       }
     } else if ('li' == element.tag) {
-      tempWidget = _resolveToLi(last, context);
+      tempWidget = _resolveToLi(last);
     } else if ('pre' == element.tag) {
       tempWidget = _resolveToPre(last);
+    } else if ('blockquote' == element.tag) {
+      tempWidget = _resolveToBlockquote(last);
     } else if ('img' == element.tag) {
       if (widgetImage != null) {
         if (element.attributes != null) {
@@ -160,7 +166,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     return _widgets;
   }
 
-  Widget _resolveToLi(_Element last, BuildContext context) {
+  Widget _resolveToLi(_Element last) {
     final temp = <Widget>[];
     final temp1 = <Widget>[];
     int liNum = 1;
@@ -220,6 +226,29 @@ class MarkdownBuilder implements md.NodeVisitor {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: last.widgets,
         ),
+      ),
+    );
+  }
+
+  Widget _resolveToBlockquote(_Element last) {
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Container(
+            width: 7,
+            height: double.infinity,
+            color: Colors.grey.shade400,
+          ),
+          SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: last.widgets,
+            ),
+          ),
+        ],
       ),
     );
   }
