@@ -87,6 +87,8 @@ class MarkdownBuilder implements md.NodeVisitor {
     ));
   }
 
+  final padding = const EdgeInsets.fromLTRB(0, 5, 0, 5);
+
   @override
   void visitElementAfter(md.Element element) {
     debugPrint('visitElementAfter $_level ${element.tag}');
@@ -103,12 +105,14 @@ class MarkdownBuilder implements md.NodeVisitor {
         _elementList.last.textSpans ??= [];
         _elementList.last.textSpans.addAll(last.textSpans);
       } else {
-        tempWidget = RichText(
-          text: TextSpan(
-            children: last.textSpans,
-            style: last.textStyle,
-          ),
-        );
+        if (last.textSpans != null && last.textSpans.isNotEmpty) {
+          tempWidget = RichText(
+            text: TextSpan(
+              children: last.textSpans,
+              style: last.textStyle,
+            ),
+          );
+        }
       }
     } else if ('li' == element.tag) {
       tempWidget = _resolveToLi(last);
@@ -117,11 +121,32 @@ class MarkdownBuilder implements md.NodeVisitor {
     } else if ('blockquote' == element.tag) {
       tempWidget = _resolveToBlockquote(last);
     } else if ('img' == element.tag) {
+      if (_elementList.isNotEmpty &&
+          _elementList.last.textSpans != null &&
+          _elementList.last.textSpans.isNotEmpty) {
+        _widgets.add(
+          Padding(
+            padding: padding,
+            child: RichText(
+              text: TextSpan(
+                children: _elementList.last.textSpans,
+                style: _elementList.last.textStyle,
+              ),
+            ),
+          ),
+        );
+        _elementList.last.textSpans = null;
+      }
       if (widgetImage != null) {
         if (element.attributes != null) {
           debugPrint(element.attributes.toString());
-          tempWidget = widgetImage(element.attributes['src']);
-          _elementList.clear();
+          //_elementList.clear();
+          _widgets.add(
+            Padding(
+              padding: padding,
+              child: widgetImage(element.attributes['src']),
+            ),
+          );
         }
       }
     } else if (last.widgets != null && last.widgets.isNotEmpty) {
@@ -139,7 +164,7 @@ class MarkdownBuilder implements md.NodeVisitor {
       if (_elementList.isEmpty) {
         _widgets.add(
           Padding(
-            padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+            padding: padding,
             child: tempWidget,
           ),
         );
