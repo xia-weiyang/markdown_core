@@ -16,50 +16,52 @@ const List<String> kTextTags = const <String>[
   'a',
 ];
 
-final defaultTextStyle = TextStyle(
-  color: Colors.black,
-);
+TextStyle defaultTextStyle(BuildContext context) => TextStyle(
+      color: Theme.of(context).brightness == Brightness.dark
+          ? const Color(0xffaaaaaa)
+          : const Color(0xff444444),
+    );
 
 TextStyle getTextStyle(TextStyle textStyle, String tag) {
   switch (tag) {
     case 'h1':
       textStyle = textStyle.copyWith(
-        fontSize: 28,
+        fontSize: 27,
       );
       break;
     case 'h2':
       textStyle = textStyle.copyWith(
-        fontSize: 26,
+        fontSize: 25,
       );
       break;
     case 'h3':
       textStyle = textStyle.copyWith(
-        fontSize: 24,
+        fontSize: 23,
       );
       break;
     case 'h4':
       textStyle = textStyle.copyWith(
-        fontSize: 22,
+        fontSize: 21,
       );
       break;
     case 'h5':
       textStyle = textStyle.copyWith(
-        fontSize: 21,
+        fontSize: 20,
       );
       break;
     case 'h6':
       textStyle = textStyle.copyWith(
-        fontSize: 20,
+        fontSize: 19,
       );
       break;
     case 'p':
       textStyle = textStyle.copyWith(
-        fontSize: 18,
+        fontSize: 17.5,
       );
       break;
     case 'li':
       textStyle = textStyle.copyWith(
-        fontSize: 18,
+        fontSize: 17.5,
       );
       break;
     case 'code':

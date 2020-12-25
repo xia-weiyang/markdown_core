@@ -14,13 +14,15 @@ class MarkdownBuilder implements md.NodeVisitor {
     this.context,
     this.linkTap,
     this.widgetImage,
-    this.maxWidth,
-  );
+    this.maxWidth, {
+    this.defaultTextStyle,
+  });
 
   final _widgets = <Widget>[];
   int _level = 0;
   List<_Element> _elementList = <_Element>[];
-  TextStyle _textStyle = defaultTextStyle;
+
+  final TextStyle defaultTextStyle;
 
   final BuildContext context;
   final LinkTap linkTap;
@@ -33,7 +35,9 @@ class MarkdownBuilder implements md.NodeVisitor {
     debugPrint('visitElementBefore $_level ${element.textContent}');
 
     var textStyle = getTextStyle(
-        _elementList.isNotEmpty ? _elementList.last.textStyle : _textStyle,
+        _elementList.isNotEmpty
+            ? _elementList.last.textStyle
+            : defaultTextStyle,
         element.tag);
 
     // 超级自定义一些特殊样式
@@ -175,11 +179,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     }
   }
 
-  List<Widget> build(
-    List<md.Node> nodes, {
-    TextStyle textStyle,
-  }) {
-    _textStyle = textStyle ?? defaultTextStyle;
+  List<Widget> build(List<md.Node> nodes) {
     _widgets.clear();
 
     for (md.Node node in nodes) {
@@ -203,6 +203,7 @@ class MarkdownBuilder implements md.NodeVisitor {
       child: Icon(
         Icons.circle,
         size: 10,
+        color: defaultTextStyle.color,
       ),
     ));
     if (last.widgets == null) {

@@ -3,6 +3,7 @@ library markdown_core;
 import 'package:flutter/material.dart';
 import 'package:markdown/markdown.dart';
 import 'package:markdown_core/builder.dart';
+import 'package:markdown_core/text_style.dart';
 
 class Markdown extends StatefulWidget {
   const Markdown({
@@ -53,6 +54,7 @@ class MarkdownState extends State<Markdown> {
       widget.linkTap,
       widget.image,
       widget.maxWidth ?? MediaQuery.of(context).size.width,
+      defaultTextStyle: defaultTextStyle(context),
     ).build(nodes);
   }
 }
