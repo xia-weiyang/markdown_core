@@ -72,3 +72,23 @@ const String markdownData1 = """
 文字文字
 第二行![旧时光](https://oss.jiushig.com/oldtime/oldtime_wallpaper.png)图片之后的文字
 """;
+
+const String markdownData2 = """
+- QQ群:[675565134(点击加入)](https://jq.qq.com/?_wv=1027&k=5ueEciR)。
+""";
+
+const String markdownData3 = """
++ 普通文本
+
+直接输入的文字就是普通文本。
+
++ 单行文本
+
+        使用两个Tab(或八个空格)符实现单行文本.
+
++ 多行文本
+
+        多行文本和
+        单行文本异曲同工，只要在
+        每行行首加两个Tab(或八个空格)。
+""";

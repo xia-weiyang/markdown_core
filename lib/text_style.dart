@@ -16,6 +16,17 @@ const List<String> kTextTags = const <String>[
   'a',
 ];
 
+const List<String> kTextParentTags = const <String>[
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'p',
+  'li',
+];
+
 TextStyle defaultTextStyle(BuildContext context) => TextStyle(
       color: Theme.of(context).brightness == Brightness.dark
           ? const Color(0xffaaaaaa)
