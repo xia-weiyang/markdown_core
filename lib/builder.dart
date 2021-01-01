@@ -107,7 +107,9 @@ class MarkdownBuilder implements md.NodeVisitor {
           kTextParentTags.indexOf(_elementList.last.tag) != -1) {
         // 内联标签处理
         _elementList.last.textSpans ??= [];
-        _elementList.last.textSpans.addAll(last.textSpans);
+        if (last != null && last.textSpans != null) {
+          _elementList.last.textSpans.addAll(last.textSpans);
+        }
       } else {
         if (last.textSpans != null && last.textSpans.isNotEmpty) {
           tempWidget = RichText(
