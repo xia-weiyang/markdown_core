@@ -22,6 +22,7 @@ class MyApp extends StatelessWidget {
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
         primarySwatch: Colors.blue,
+        brightness: Brightness.light,
       ),
       home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -56,6 +57,9 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
+      backgroundColor: Theme.of(context).brightness == Brightness.dark
+          ? Colors.black
+          : Colors.white,
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
@@ -64,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Markdown(
-            data: markdownData4,
+            data: markdownData,
             linkTap: (link) => print('点击了链接 $link'),
             image: (imageUrl) {
               print('imageUrl $imageUrl');

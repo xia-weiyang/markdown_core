@@ -248,7 +248,9 @@ class MarkdownBuilder implements md.NodeVisitor {
       padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
       child: Container(
         width: double.infinity,
-        color: const Color(0xffeeeeee),
+        color: Theme.of(context).brightness == Brightness.dark
+            ? const Color(0xff111111)
+            : const Color(0xffeeeeee),
         padding: const EdgeInsets.fromLTRB(8, 14, 8, 0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
