@@ -70,11 +70,11 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Markdown(
             data: markdownData,
             linkTap: (link) => print('点击了链接 $link'),
-            textStyle: TextStyle(
-              fontSize: 18,
-              height: 1.8,
-              color: Colors.black,
-            ),
+            // textStyle: TextStyle(
+            //   fontSize: 18,
+            //   height: 1.8,
+            //   color: Colors.black,
+            // ),
             image: (imageUrl) {
               print('imageUrl $imageUrl');
               return CachedNetworkImage(

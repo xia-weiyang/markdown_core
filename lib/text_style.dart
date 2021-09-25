@@ -28,6 +28,8 @@ const List<String> kTextParentTags = const <String>[
 ];
 
 TextStyle defaultTextStyle(BuildContext context) => TextStyle(
+      fontSize: 18,
+      height: 1.8,
       color: Theme.of(context).brightness == Brightness.dark
           ? const Color(0xffaaaaaa)
           : const Color(0xff444444),
