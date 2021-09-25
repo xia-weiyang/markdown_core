@@ -14,8 +14,9 @@ class MarkdownBuilder implements md.NodeVisitor {
     this.context,
     this.linkTap,
     this.widgetImage,
-    this.maxWidth, {
-    this.defaultTextStyle,
+    this.maxWidth,
+    this.defaultTextStyle, {
+    this.tagTextStyle = defaultTagTextStyle,
   });
 
   final _widgets = <Widget>[];
@@ -23,6 +24,7 @@ class MarkdownBuilder implements md.NodeVisitor {
   List<_Element> _elementList = <_Element>[];
 
   final TextStyle defaultTextStyle;
+  final TagTextStyle tagTextStyle;
 
   final BuildContext context;
   final LinkTap linkTap;
@@ -34,20 +36,16 @@ class MarkdownBuilder implements md.NodeVisitor {
     _level++;
     debugPrint('visitElementBefore $_level ${element.textContent}');
 
-    var textStyle = getTextStyle(
-        _elementList.isNotEmpty
-            ? _elementList.last.textStyle
-            : defaultTextStyle,
-        element.tag);
-
-    // 超级自定义一些特殊样式
+    String lastTag;
     if (_elementList.isNotEmpty) {
-      if (_elementList.last.tag == 'p' && element.tag == 'code') {
-        textStyle = textStyle.copyWith(
-          color: Colors.red.shade800,
-        );
-      }
+      lastTag = _elementList.last.tag;
     }
+
+    var textStyle = tagTextStyle(
+      lastTag,
+      element.tag,
+      _elementList.isNotEmpty ? _elementList.last.textStyle : defaultTextStyle,
+    );
 
     _elementList.add(_Element(
       element.tag,
@@ -176,7 +174,11 @@ class MarkdownBuilder implements md.NodeVisitor {
         );
       } else {
         _elementList.last.widgets ??= [];
-        _elementList.last.widgets.add(tempWidget);
+        if (tempWidget is List<Widget>) {
+          _elementList.last.widgets.addAll(tempWidget);
+        } else {
+          _elementList.last.widgets.add(tempWidget);
+        }
       }
     }
   }
@@ -193,54 +195,62 @@ class MarkdownBuilder implements md.NodeVisitor {
     return _widgets;
   }
 
-  Widget _resolveToLi(_Element last) {
-    final temp = <Widget>[];
-    final temp1 = <Widget>[];
+  dynamic _resolveToLi(_Element last) {
     int liNum = 1;
     _elementList?.forEach((element) {
       if (element.tag == 'li') liNum++;
     });
-    temp.add(Padding(
-      padding: const EdgeInsets.fromLTRB(8, 10, 8, 0),
-      child: Icon(
-        Icons.circle,
-        size: 10,
-        color: defaultTextStyle.color,
-      ),
-    ));
-    if (last.widgets == null) {
-      temp.add(Container(
-        width: maxWidth - (26 * liNum),
-        child: RichText(
-          text: TextSpan(
-            children: last.textSpans,
-            style: last.textStyle,
-          ),
-        ),
-      ));
-    } else {
-      temp1.add(RichText(
-        text: TextSpan(
-          children: last.textSpans,
-          style: last.textStyle,
-        ),
-      ));
-      temp1.addAll(last.widgets);
-      temp.add(
-        Container(
-          width: maxWidth - (26 * liNum),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: temp1,
-          ),
-        ),
+    List<Widget> widgets = last.widgets ?? [];
+    List<InlineSpan> spans = [];
+    spans.addAll(last.textSpans);
+    widgets.insert(
+        0,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: EdgeInsets.fromLTRB(
+                8,
+                (last.textStyle.fontSize * 2 - 10) / 2.2,
+                8,
+                0,
+              ),
+              child: Icon(
+                Icons.circle,
+                size: 10,
+                color: last.textStyle.color,
+              ),
+            ),
+            Container(
+              width: maxWidth - (26 * liNum),
+              child: RichText(
+                strutStyle: StrutStyle(
+                  height: 1,
+                  fontSize: last.textStyle.fontSize,
+                  forceStrutHeight: true,
+                  leading: 1,
+                ),
+                // textAlign: TextAlign.center,
+                text: TextSpan(
+                  children: spans,
+                  style: last.textStyle,
+                ),
+              ),
+            )
+          ],
+        ));
+
+    /// 如果是顶层，返回column
+    if (liNum == 1) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: widgets,
       );
+    } else {
+      return widgets;
     }
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: temp,
-    );
   }
 
   Widget _resolveToPre(_Element last) {
@@ -302,3 +312,5 @@ class _Element {
 typedef void LinkTap(String link);
 
 typedef Widget WidgetImage(String imageUrl);
+
+typedef TextStyle TagTextStyle(String lastTag, String tag, TextStyle textStyle);

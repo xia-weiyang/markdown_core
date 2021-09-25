@@ -33,53 +33,53 @@ TextStyle defaultTextStyle(BuildContext context) => TextStyle(
           : const Color(0xff444444),
     );
 
-TextStyle getTextStyle(TextStyle textStyle, String tag) {
+TextStyle defaultTagTextStyle(String lastTag, String tag, TextStyle textStyle) {
   switch (tag) {
     case 'h1':
       textStyle = textStyle.copyWith(
-        fontSize: 27,
+        fontSize: textStyle.fontSize + 9,
       );
       break;
     case 'h2':
       textStyle = textStyle.copyWith(
-        fontSize: 25,
+        fontSize: textStyle.fontSize + 6,
       );
       break;
     case 'h3':
       textStyle = textStyle.copyWith(
-        fontSize: 23,
+        fontSize: textStyle.fontSize + 4,
       );
       break;
     case 'h4':
       textStyle = textStyle.copyWith(
-        fontSize: 21,
+        fontSize: textStyle.fontSize + 3,
       );
       break;
     case 'h5':
       textStyle = textStyle.copyWith(
-        fontSize: 20,
+        fontSize: textStyle.fontSize + 2,
       );
       break;
     case 'h6':
       textStyle = textStyle.copyWith(
-        fontSize: 19,
+        fontSize: textStyle.fontSize + 1,
       );
       break;
     case 'p':
-      textStyle = textStyle.copyWith(
-        fontSize: 17.5,
-      );
       break;
     case 'li':
-      textStyle = textStyle.copyWith(
-        fontSize: 17.5,
-      );
       break;
     case 'code':
       textStyle = textStyle.copyWith(
-        fontSize: 15,
+        fontSize: textStyle.fontSize - 3,
         color: textStyle.color.withAlpha(200),
       );
+      if (lastTag == 'p') {
+        textStyle = textStyle.copyWith(
+          color: Colors.red.shade800,
+        );
+      }
+
       break;
     case 'strong':
       textStyle = textStyle.copyWith(

@@ -57,7 +57,7 @@ class MarkdownState extends State<Markdown> {
       widget.linkTap,
       widget.image,
       widget.maxWidth ?? MediaQuery.of(context).size.width,
-      defaultTextStyle: widget.textStyle ?? defaultTextStyle(context),
+      widget.textStyle ?? defaultTextStyle(context),
     ).build(nodes);
   }
 }
