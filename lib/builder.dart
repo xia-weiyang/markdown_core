@@ -36,7 +36,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     _level++;
     debugPrint('visitElementBefore $_level ${element.textContent}');
 
-    String lastTag;
+    String lastTag = '';
     if (_elementList.isNotEmpty) {
       lastTag = _elementList.last.tag;
     }
@@ -65,25 +65,23 @@ class MarkdownBuilder implements md.NodeVisitor {
     last.textSpans ??= [];
 
     // 替换特定字符串
-    var content = text.text?.replaceAll('&gt;', '>');
-    content = content?.replaceAll('&lt;', '<');
+    var content = text.text.replaceAll('&gt;', '>');
+    content = content.replaceAll('&lt;', '<');
 
     if (last.tag == 'a') {
-      last.textSpans.add(TextSpan(
+      last.textSpans?.add(TextSpan(
         text: content,
         style: last.textStyle,
         recognizer: TapGestureRecognizer()
           ..onTap = () {
-            if (linkTap != null && last.attributes != null) {
-              debugPrint(last.attributes.toString());
-              linkTap(last.attributes['href']);
-            }
+            debugPrint(last.attributes.toString());
+            linkTap(last.attributes['href'] ?? '');
           },
       ));
       return;
     }
 
-    last.textSpans.add(TextSpan(
+    last.textSpans?.add(TextSpan(
       text: content,
       style: last.textStyle,
     ));
@@ -105,11 +103,9 @@ class MarkdownBuilder implements md.NodeVisitor {
           kTextParentTags.indexOf(_elementList.last.tag) != -1) {
         // 内联标签处理
         _elementList.last.textSpans ??= [];
-        if (last != null && last.textSpans != null) {
-          _elementList.last.textSpans.addAll(last.textSpans);
-        }
+        _elementList.last.textSpans?.addAll(last.textSpans ?? []);
       } else {
-        if (last.textSpans != null && last.textSpans.isNotEmpty) {
+        if (last.textSpans?.isNotEmpty ?? false) {
           tempWidget = RichText(
             text: TextSpan(
               children: last.textSpans,
@@ -126,8 +122,7 @@ class MarkdownBuilder implements md.NodeVisitor {
       tempWidget = _resolveToBlockquote(last);
     } else if ('img' == element.tag) {
       if (_elementList.isNotEmpty &&
-          _elementList.last.textSpans != null &&
-          _elementList.last.textSpans.isNotEmpty) {
+          (_elementList.last.textSpans?.isNotEmpty ?? false)) {
         _widgets.add(
           Padding(
             padding: padding,
@@ -141,25 +136,21 @@ class MarkdownBuilder implements md.NodeVisitor {
         );
         _elementList.last.textSpans = null;
       }
-      if (widgetImage != null) {
-        if (element.attributes != null) {
-          debugPrint(element.attributes.toString());
-          //_elementList.clear();
-          _widgets.add(
-            Padding(
-              padding: padding,
-              child: widgetImage(element.attributes['src']),
-            ),
-          );
-        }
-      }
-    } else if (last.widgets != null && last.widgets.isNotEmpty) {
-      if (last.widgets.length == 1) {
-        tempWidget = last.widgets[0];
+      debugPrint(element.attributes.toString());
+      //_elementList.clear();
+      _widgets.add(
+        Padding(
+          padding: padding,
+          child: widgetImage(element.attributes['src'] ?? ''),
+        ),
+      );
+    } else if (last.widgets?.isNotEmpty ?? false) {
+      if (last.widgets?.length == 1) {
+        tempWidget = last.widgets?[0];
       } else {
         tempWidget = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: last.widgets,
+          children: last.widgets ?? [],
         );
       }
     }
@@ -175,9 +166,9 @@ class MarkdownBuilder implements md.NodeVisitor {
       } else {
         _elementList.last.widgets ??= [];
         if (tempWidget is List<Widget>) {
-          _elementList.last.widgets.addAll(tempWidget);
+          _elementList.last.widgets?.addAll(tempWidget);
         } else {
-          _elementList.last.widgets.add(tempWidget);
+          _elementList.last.widgets?.add(tempWidget);
         }
       }
     }
@@ -197,12 +188,12 @@ class MarkdownBuilder implements md.NodeVisitor {
 
   dynamic _resolveToLi(_Element last) {
     int liNum = 1;
-    _elementList?.forEach((element) {
+    _elementList.forEach((element) {
       if (element.tag == 'li') liNum++;
     });
     List<Widget> widgets = last.widgets ?? [];
     List<InlineSpan> spans = [];
-    spans.addAll(last.textSpans);
+    spans.addAll(last.textSpans ?? []);
     widgets.insert(
         0,
         Row(
@@ -212,7 +203,7 @@ class MarkdownBuilder implements md.NodeVisitor {
             Container(
               padding: EdgeInsets.fromLTRB(
                 8,
-                (last.textStyle.fontSize * 2 - 10) / 2.2,
+                ((last.textStyle.fontSize ?? 0) * 2 - 10) / 2.2,
                 8,
                 0,
               ),
@@ -264,7 +255,7 @@ class MarkdownBuilder implements md.NodeVisitor {
         padding: const EdgeInsets.fromLTRB(8, 14, 8, 0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: last.widgets,
+          children: last.widgets ?? [],
         ),
       ),
     );
@@ -285,7 +276,7 @@ class MarkdownBuilder implements md.NodeVisitor {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: last.widgets,
+              children: last.widgets ?? [],
             ),
           ),
         ],
@@ -302,8 +293,8 @@ class _Element {
   );
 
   final String tag;
-  List<Widget> widgets;
-  List<TextSpan> textSpans;
+  List<Widget>? widgets;
+  List<TextSpan>? textSpans;
   TextStyle textStyle;
   Map<String, String> attributes;
 }

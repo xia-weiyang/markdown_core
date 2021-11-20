@@ -39,32 +39,32 @@ TextStyle defaultTagTextStyle(String lastTag, String tag, TextStyle textStyle) {
   switch (tag) {
     case 'h1':
       textStyle = textStyle.copyWith(
-        fontSize: textStyle.fontSize + 9,
+        fontSize: (textStyle.fontSize ?? 0) + 9,
       );
       break;
     case 'h2':
       textStyle = textStyle.copyWith(
-        fontSize: textStyle.fontSize + 6,
+        fontSize: (textStyle.fontSize ?? 0) + 6,
       );
       break;
     case 'h3':
       textStyle = textStyle.copyWith(
-        fontSize: textStyle.fontSize + 4,
+        fontSize: (textStyle.fontSize ?? 0) + 4,
       );
       break;
     case 'h4':
       textStyle = textStyle.copyWith(
-        fontSize: textStyle.fontSize + 3,
+        fontSize: (textStyle.fontSize ?? 0) + 3,
       );
       break;
     case 'h5':
       textStyle = textStyle.copyWith(
-        fontSize: textStyle.fontSize + 2,
+        fontSize: (textStyle.fontSize ?? 0) + 2,
       );
       break;
     case 'h6':
       textStyle = textStyle.copyWith(
-        fontSize: textStyle.fontSize + 1,
+        fontSize: (textStyle.fontSize ?? 0) + 1,
       );
       break;
     case 'p':
@@ -73,8 +73,8 @@ TextStyle defaultTagTextStyle(String lastTag, String tag, TextStyle textStyle) {
       break;
     case 'code':
       textStyle = textStyle.copyWith(
-        fontSize: textStyle.fontSize - 3,
-        color: textStyle.color.withAlpha(200),
+        fontSize: (textStyle.fontSize ?? 0) - 3,
+        color: textStyle.color?.withAlpha(200),
       );
       if (lastTag == 'p') {
         textStyle = textStyle.copyWith(

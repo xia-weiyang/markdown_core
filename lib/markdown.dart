@@ -7,10 +7,10 @@ import 'package:markdown_core/text_style.dart';
 
 class Markdown extends StatefulWidget {
   const Markdown({
-    Key key,
-    this.data,
-    this.linkTap,
-    this.image,
+    Key? key,
+    required this.data,
+    required this.linkTap,
+    required this.image,
     this.maxWidth,
     this.textStyle,
   }) : super(key: key);
@@ -21,9 +21,9 @@ class Markdown extends StatefulWidget {
 
   final WidgetImage image;
 
-  final double maxWidth;
+  final double? maxWidth;
 
-  final TextStyle textStyle;
+  final TextStyle? textStyle;
 
   @override
   MarkdownState createState() => MarkdownState();
