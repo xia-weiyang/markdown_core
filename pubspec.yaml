@@ -1,5 +1,5 @@
 name: markdown_core
-description: A new Flutter package project.
+description: Parse markdown and render it into rich text.
 version: 0.0.1
 
 environment:
