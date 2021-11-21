@@ -2,10 +2,7 @@
 
 Parse markdown and render it into rich text.
 
-<video controls width="400" height="802">
-    <source src="https://xia-weiyang.github.io/video/markdown_core.mov"
-            type="video/mov">
-</video>
+![show](https://xia-weiyang.github.io/gif/markdown_core.gif)
 
 ``` dart
 Markdown(
@@ -18,4 +15,3 @@ Markdown(
     },
 )
 ```
-
