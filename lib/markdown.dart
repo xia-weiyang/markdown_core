@@ -2,8 +2,8 @@ library markdown_core;
 
 import 'package:flutter/material.dart';
 import 'package:markdown/markdown.dart';
-import 'package:markdown_core/builder.dart';
-import 'package:markdown_core/text_style.dart';
+import 'package:markdown_core/src/builder.dart';
+import 'package:markdown_core/src/text_style.dart';
 
 class Markdown extends StatefulWidget {
   const Markdown({
