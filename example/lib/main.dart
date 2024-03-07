@@ -1,6 +1,6 @@
 import 'package:example/data.dart';
 import 'package:flutter/material.dart';
-import 'package:markdown_core/markdown.dart';
+import 'package:markdown_core/markdown_core.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 void main() => runApp(MyApp());

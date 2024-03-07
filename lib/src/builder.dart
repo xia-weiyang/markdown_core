@@ -1,6 +1,5 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:markdown_core/src/text_style.dart';
 
