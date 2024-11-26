@@ -1,6 +1,6 @@
 name: markdown_core
 description: Parse markdown and render it into rich text.
-version: 1.0.2
+version: 1.0.3
 homepage: https://github.com/xia-weiyang/markdown_core
 repository: https://github.com/xia-weiyang/markdown_core
 

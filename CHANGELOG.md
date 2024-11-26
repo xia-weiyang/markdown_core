@@ -1,3 +1,5 @@
+## 1.0.3
+- Fix import bug
 ## 1.0.2
 - Support line breaks using <br> tag
 - Fix excessive spacing when inserting consecutive images

@@ -5,6 +5,8 @@ import 'package:markdown/markdown.dart';
 import 'package:markdown_core/src/builder.dart';
 import 'package:markdown_core/src/text_style.dart';
 
+export 'package:markdown_core/src/builder.dart';
+
 class Markdown extends StatefulWidget {
   const Markdown({
     Key? key,
