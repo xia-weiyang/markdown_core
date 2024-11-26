@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:markdown_core/src/text_style.dart';
+import 'package:markdown_core/src/util.dart';
 
 /// 递归解析标签
 /// [_elementList] 每个标签依次放入该集合
@@ -56,15 +57,23 @@ class MarkdownBuilder implements md.NodeVisitor {
   }
 
   @override
-  void visitText(md.Text text) {
-    debugPrint('text ${text.text}');
-
-    if (_elementList.isEmpty) return;
+  void visitText(md.Text text1) {
+    debugPrint('text ${text1.text}');
+    final text = text1.text.replaceAll("\n", "");
+    if (text.isEmpty) return;
+    if (_elementList.isEmpty) {
+      int count = countBrTags(text);
+      if(count > 0){
+        debugPrint("br: $count");
+        _widgets.add(Padding(padding: EdgeInsets.only(bottom: 10.0 * count)));
+      }
+      return;
+    }
     var last = _elementList.last;
     last.textSpans ??= [];
 
     // 替换特定字符串
-    var content = text.text.replaceAll('&gt;', '>');
+    var content = text.replaceAll('&gt;', '>');
     content = content.replaceAll('&lt;', '<');
 
     if (last.tag == 'a') {

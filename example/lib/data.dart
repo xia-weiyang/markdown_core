@@ -25,7 +25,7 @@ const String markdownData = """
 
 使用 \\!\\[描述](图片链接地址) 插入图像，仅仅比链接前面多了一个!号。插入图片示例： 
 
-![旧时光](https://oss.jiushig.com/oldtime/oldtime_wallpaper.png)
+![旧时光](https://file.jiushig.com/oldtime/oldtime_wallpaper.png)
 
 ## 5. 列表
 
